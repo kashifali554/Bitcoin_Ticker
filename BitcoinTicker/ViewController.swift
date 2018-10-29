@@ -15,6 +15,8 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     
     let baseURL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC"
     let currencyArray = ["AUD", "BRL","CAD","CNY","EUR","GBP","HKD","IDR","ILS","INR","JPY","MXN","NOK","NZD","PLN","RON","RUB","SEK","SGD","USD","ZAR"]
+    let currencySymbolArray = ["$", "R$", "$", "¥", "€", "£", "$", "Rp", "₪", "₹", "¥", "$", "kr", "$", "zł", "lei", "₽", "kr", "$", "$", "R"]
+    var currencySelected = ""
     var finalURL = ""
 
     //Pre-setup IBOutlets
@@ -34,22 +36,24 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 
     
     //TODO: Place your 3 UIPickerView delegate methods here
+    //This function is selecting the number of rows to be showen on screen. i.e currency
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
         
     }
-    
+    //This function is looping through the currency array and adding all of currencies to the pickerlist
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return currencyArray.count
     }
     
-
+    //This function is adding array values. i.e the actual currancy to the pickerlist
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return currencyArray[row]
     }
-    
+    //This function is working making an api call to get bitcoin pricing
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         finalURL = baseURL + currencyArray[row]
+        currencySelected = currencySymbolArray[row]
         getBitcoinPrice(url: finalURL)
     }
 //
@@ -85,7 +89,7 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     func updateBitcoinData(json : JSON) {
         
         if let bitcoinResult = json["ask"].double {
-            bitcoinPriceLabel.text = String(bitcoinResult)
+            bitcoinPriceLabel.text = currencySelected + String(bitcoinResult)
         } else {
             bitcoinPriceLabel.text = "Price Unavailable"
         }
